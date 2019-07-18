@@ -1,0 +1,47 @@
+#!/bin/sh
+
+if [[ ! -d ".git" ]]; then
+    echo "do not have a git repository"
+    exit 1
+fi
+
+if [[ ! -f ".git/strange_log" ]] || [[ ${1} == "clean" ]]; then
+    git checkout master
+    git log --pretty=format:"%H" > .git/strange_log
+fi
+
+if [[ ${2} == "start" ]] || [[ ${1} == "start" ]]; then
+    COMMIT_ID=`tail -1 .git/strange_log`
+    git checkout ${COMMIT_ID}
+elif [[ ${2} == "next" ]] || [[ ${1} == "next" ]]; then
+    CURRENT_COMMIT_ID=`git log --pretty=format:"%H" | head -n 1`
+    NEXT_COMMIT_ID=`grep "${CURRENT_COMMIT_ID}" .git/strange_log -B 1 | head -n 1`
+    git checkout ${NEXT_COMMIT_ID}
+elif [[ ${1} == "checkout" ]]; then
+    git checkout ${2}
+else
+    COMMIT_INDEX=-1
+    while getopts n:h: OPT; do
+        case ${OPT} in
+            n)
+                COMMIT_INDEX=${OPTARG}
+                ;;
+            h)
+                ;;
+        esac
+    done
+
+    expr ${COMMIT_INDEX} "+" 10 &> /dev/null
+    if [ $? -eq 0 ];then
+        if [ ${COMMIT_INDEX} -gt 0 ]; then
+            COMMIT_ID=`tail -n ${COMMIT_INDEX} .git/strange_log | head -n 1`
+        elif [ ${COMMIT_INDEX} -eq 0 ]; then
+            COMMIT_ID=`head -n 1 .git/strange_log`
+        else
+            COMMIT_ID=`head ${COMMIT_INDEX} .git/strange_log | tail -n 1`
+        fi
+        git checkout ${COMMIT_ID}
+    else
+        echo "${COMMIT_INDEX} not number"
+    fi
+fi
