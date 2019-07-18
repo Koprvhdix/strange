@@ -1,5 +1,7 @@
 # Strange
-The Doctor Strange of git repository. The best way to read source code, such as etcd, is read code from the first commit. The shell `strange` is to help us checkout the commit we want.
+The Doctor Strange of git repository. The best way to read source code, such as etcd, is reading code from the first commit to the last. The shell `strange` is to help us checkouting the commit we want.
+
+[中文文档/Chinese Documentation](README_CN.md)
 
 ## Usage
 - First of all, we should add `strange` to $PATH.
@@ -24,4 +26,4 @@ strange -n -1   # checkout to the lastest commit.
 strange checkout master
 ```
 
-- When the master branch update, we should run `strange clean` to update the commit list. The commit list of master branch will be in `.git/strange_log`. 
+- When the master branch updates, we should run `strange clean` to update the commit list. The commit list of master branch will be in `.git/strange_log`. 
